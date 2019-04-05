@@ -123,7 +123,7 @@ getId() / getPriority() /setPriority() / setDaemon() / isDaemon() / currentThrea
 >
 > **编译器**根据程序中添加的pragma指令，自动将程序并行处理，使用OpenMP降低了并行编程的难度和复杂度。当编译器不支持OpenMP时，程序会退化成普通（串行）程序。程序中已有的OpenMP指令不会影响程序的正常编译运行。
 
-![image-20190405172731695](/Users/nicole/Desktop/image-20190405172731695.png)
+![image-20190405172731695](image-20190405172731695.png)
 
 ### 编程模型
 
