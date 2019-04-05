@@ -8,7 +8,7 @@
 
 ### POSIX Pthread
 
-![image-20190405101035285](/Users/nicole/Desktop/image-20190405101035285.png)
+![image-20190405101035285](image-20190405101035285.png)
 
 #### 如何使用
 
@@ -71,7 +71,7 @@ thread's stack的大小不是由POSIX standard决定的，超过stack size限制
 
 使用Java代码创建线程，调用`Thread.start()`的时候，都是通过LWP接口创建了KLT内核线程，然后通过OS的Thread Scheduler对内核线程进行调度分配CPU。
 
-![image-20190405091922573](/Users/nicole/Desktop/image-20190405091922573.png)
+![image-20190405091922573](image-20190405091922573.png)
 
 可以从图中看出**每一个内核线程都是独立的轻量级进程**，所以线程间相互独立，但是需要系统调度开销会很大；每个线程都有自己独立的工作内存，无法访问其它线程的工作内存，同时也不能直接读写main memory中的变量。
 
@@ -79,7 +79,7 @@ thread's stack的大小不是由POSIX standard决定的，超过stack size限制
 
 线程状态转换图
 
-![image-20190405092800217](/Users/nicole/Desktop/image-20190405092800217.png)
+![image-20190405092800217](image-20190405092800217.png)
 
 **创建线程**
 
