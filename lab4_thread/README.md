@@ -172,7 +172,7 @@ getId() / getPriority() /setPriority() / setDaemon() / isDaemon() / currentThrea
    structured_block
 ```
 
-![image-20190405174617131](/Users/nicole/Desktop/image-20190405174617131.png)
+![image-20190405174617131](image-20190405174617131.png)
 
 ```c
 #pragma omp for [clause ...]  newline 
