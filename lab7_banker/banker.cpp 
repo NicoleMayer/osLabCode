@@ -1,0 +1,258 @@
+#include <iostream>
+#include <string.h>
+#include <map>
+#include <vector>
+
+using namespace std;
+
+vector<int> getVector(int size);
+vector<int> copyVector(vector<int> &org_vector);
+void printMap(map< int, vector<int> > map);
+void printVector(vector<int> vec);
+bool findPid(map< int, vector<int> > map_, int id);
+bool is_available(vector<int> &available, vector<int> &newRequiremnt);
+bool is_safe(vector<int> &available, map< int, vector<int> > &allocation, map< int, vector<int> > &need);
+
+bool terminate_(int pid);
+bool new_(int pid, vector<int> &tmp_vector);
+bool request_(int pid, vector<int> &tmp_vector);
+
+int num_resources;
+map< int, vector<int> > max_vectors;
+map< int, vector<int> > alloc_vectors;
+map< int, vector<int> > need_vectors;
+vector<int> max_avail_vector;
+vector<int> cur_avail_vector;
+
+int main(int argc, char *argv[])
+{
+  int pid;
+  bool is_satified;
+  string command;
+  cin >> num_resources;                            // get number of resources type
+  max_avail_vector = getVector(num_resources);     // get the current available resources
+  cur_avail_vector = copyVector(max_avail_vector); // get the current available resources
+
+  // ~~~~~~~~~~~~ loop to get commands ~~~~~~~~~~~ //
+ 
+  while (cin >> pid)
+  {
+    cin >> command;                          // read current command and requested pid
+
+    // terminated: no need to read the resource vector //
+    if (!command.compare("terminate"))
+    {
+      is_satified = terminate_(pid);
+    }
+    // read the resource vectore //
+    else if (!command.compare("new"))
+    {
+      vector<int> tmp_vector = getVector(num_resources);
+      is_satified = new_(pid, tmp_vector);
+    }
+    // read the resource vectore //
+    else if (!command.compare("request"))
+    {
+      vector<int> tmp_vector = getVector(num_resources);
+      is_satified = request_(pid, tmp_vector);
+    }
+    else{
+      is_satified = false; //TODO invalid input may need more careful solution
+    }
+      
+    if (!is_satified)
+    {
+      cout << "NOT OK" << endl;
+    }
+    else
+    {
+      cout << "OK" << endl; 
+    }
+
+    // printMap(max_vectors);
+    // printMap(alloc_vectors);
+    // printMap(need_vectors);
+    // printVector(cur_avail_vector);
+  }
+
+  return 0;
+}
+
+void printVector(vector<int> vec)
+{
+  for(int i = 0; i < vec.size(); i++)
+  {
+    cout << vec[i] << ' ';
+  }
+  cout << endl;
+}
+
+bool terminate_(int pid)
+{
+  if (!findPid(max_vectors, pid)){
+    // cout << "not find pid" << endl;
+    return false;
+  }
+  else
+  {
+    // cout << "terminate" << endl;
+    for (int i = 0; i < num_resources; i++)
+    {
+      cur_avail_vector[i] += alloc_vectors[pid][i];
+    }
+    max_vectors.erase(pid);
+    alloc_vectors.erase(pid);
+    need_vectors.erase(pid);
+  }
+  return true;
+}
+
+bool new_(int pid, vector<int> &tmp_vector)
+{
+  if (!is_available(max_avail_vector, tmp_vector) || findPid(max_vectors, pid))
+    return false;
+
+  // cout << "new" << endl;
+  vector<int> tmp_max_vector(num_resources);
+  vector<int> tmp_need_vector(num_resources);
+  vector<int> tmp_alloc_vector(num_resources);
+  for (int i = 0; i < num_resources; i++)
+  {
+    tmp_max_vector[i] = tmp_vector[i];
+    tmp_alloc_vector[i] = 0;
+    tmp_need_vector[i] = tmp_vector[i];
+  }
+  max_vectors[pid] = tmp_vector;
+  alloc_vectors[pid] = tmp_alloc_vector;
+  need_vectors[pid] = tmp_need_vector;
+  return true;
+}
+
+bool request_(int pid, vector<int> &tmp_vector)
+{
+  // cout << "request" << endl;
+  if (!findPid(max_vectors, pid) || !is_available(need_vectors[pid], tmp_vector) || !is_available(cur_avail_vector, tmp_vector))
+    return false;
+
+  bool is_satified = true;
+  for (int i = 0; i < num_resources; i++)
+  {
+    need_vectors[pid][i] -= tmp_vector[i];
+    alloc_vectors[pid][i] += tmp_vector[i];
+    cur_avail_vector[i] -= tmp_vector[i];
+  }
+  if (!is_safe(cur_avail_vector, alloc_vectors, need_vectors))
+  {
+    is_satified = false;
+    for (int i = 0; i < num_resources; i++)
+    {
+      need_vectors[pid][i] += tmp_vector[i];
+      alloc_vectors[pid][i] -= tmp_vector[i];
+      cur_avail_vector[i] += tmp_vector[i];
+    }
+  }
+  return is_satified;
+}
+
+vector<int> getVector(int size)
+{
+  vector<int> vec;
+  int val;
+  for (int i = 0; i < size; i++)
+  {
+    cin >> val;
+    vec.push_back(val);
+  }
+  return vec;
+}
+
+vector<int> copyVector(vector<int> &org_vector)
+{
+  int size = org_vector.size();
+  vector<int> vec(size);
+  for (int i = 0; i < size; i++)
+  {
+    vec[i] = org_vector[i];
+  }
+  return vec;
+}
+
+// ~~~ for a new process's requirement ~~~ //
+bool is_available(vector<int> &available, vector<int> &newRequiremnt)
+{
+  for (int i = 0; i < available.size(); i++)
+  {
+    // cout << "cur available " << available[i] << endl;
+    // cout << "cur require " << newRequiremnt[i] << endl;
+    if (available[i] < newRequiremnt[i])
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool is_safe(vector<int> &available, map< int, vector<int> > &allocation, map< int, vector<int> > &need)
+{
+  vector<bool> finish(available.size());
+  vector<int> work = available;
+
+  vector<int> safe_seq;
+
+  while (safe_seq.size() < need.size())
+  {
+    bool flag = false;
+    map< int, vector<int> >::iterator iter_a = allocation.begin();
+    map< int, vector<int> >::iterator iter_n = need.begin();
+
+    for (int i = 0; i < need.size(); i++, iter_a++, iter_n++)
+    {
+      if (!finish[i] && is_available(work, iter_n->second))
+      {
+        finish[i] = true;
+        safe_seq.push_back(i);
+        for (int j = 0; j < work.size(); j++)
+        {
+          work[j] = work[j] + iter_a->second[j];
+        }
+        flag = true;
+      }
+    }
+    if (!flag)
+    {
+      return false;
+    }
+  }
+  // for (int j = 0; j < safe_seq.size(); j++)
+  // {
+  //   cout << "P" << safe_seq[j] << " ";
+  // }
+  // cout << endl;
+  return true;
+}
+
+bool findPid(map< int, vector<int> > map_, int id)
+{
+  map< int, vector<int> >::iterator it = map_.find(id);
+  if(it != map_.end())
+  {
+    return true;
+  }
+  return false;
+}
+
+void printMap(map< int, vector<int> > map_)
+{
+  map< int, vector<int> >::iterator it;
+  cout << "=== print vector ===" << endl;
+  for(it = map_.begin(); it != map_.end(); it++)
+  {
+    cout << "key: " << it->first << endl;
+    cout << "value: ";
+    for(int i = 0; i < it->second.size(); i++)
+    {
+      cout << it->second[i] << ' ';
+    }
+    cout << endl;
+  }
+}
