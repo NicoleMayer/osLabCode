@@ -1,3 +1,12 @@
+# semaphore.c
+
+在C文件中semaphore的基本使用方法
+
+# milk.c
+
+爸爸妈妈买牛奶的问题，很经典，经lab课分析原代码还存在bug
+通过这个例子熟练使用mutex相关api
+
 # producer_consumer.c 的理解
 
 ![image-20190407122648010](images/image-20190407122648010.png)
