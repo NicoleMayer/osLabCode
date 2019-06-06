@@ -128,7 +128,7 @@ $ rm temp
 
 问题
 
-![image-20190606203144211](/Users/nicole/Library/Application Support/typora-user-images/image-20190606203144211.png)
+As you know, if we want to do inter-process communication, we need at least two processes. Write a program that call fork() to generate a child process, and use pipe() to create a pipe between them. And then, you should input message in one of the process and display the message in the other process.
 
 解决 
 
@@ -137,16 +137,6 @@ $ rm temp
 结果如下
 
 ![pipe_result](images/pipe_result.png)
-
-
-
-## 未解之谜
-
-上课讨论的玄学问题：
-
-![problem](images/problem.png)
-
-关于这段代码的输出，如果不带`\n`可能会有多种结果，应该是buffer的问题，但多次尝试的结果千奇百怪，没办法说通自己。也许有的进程会提前终止，因为父进程终止了？或者像老师猜测的bash显示问题，已经写出来但是被覆盖了？
 
 
 
@@ -166,6 +156,7 @@ $ rm temp
 
 让某个进程组成为前台进程组，不仅保证它能够与控制终端保持联系，还保证了前台进程组中的每一个进程都能从终端接收到控制信号，如 SIGTSTP。简单的方法是，把所有的子进程放在同一个进程组中，在创建它们时屏蔽 SIGTSTP 信号，这样只有 shell 才能接收到这个信号，然后 shell 发出与 SIGTSTP 作用相同的（但没有屏蔽的）SIGSTOP 信号给某个子进程。这种办法在某些时候会使程序运行失败，比如在自己的 ysh 中再次运行 ysh，但这种办法对于本实验来说是不涉及的。
 
+
 使用命令 `ps ajx` 可以查看会话的前台进程组，位于 TGPID 一栏，如果该值为 -1，表示该进程没有控制终端，所以也没有前台进程组。
 
 ![qiantai](images/qiantai.png)
@@ -173,3 +164,14 @@ $ rm temp
 ![image-20190606213416909](images/image-20190606213416909.png)
 
 ![image-20190606213528030](images/image-20190606213528030.png)
+
+
+
+
+## 未解之谜
+
+上课讨论的玄学问题：
+
+![problem](images/problem.png)
+
+关于这段代码的输出，如果不带`\n`可能会有多种结果，应该是buffer的问题，但多次尝试的结果千奇百怪，没办法说通自己。也许有的进程会提前终止，因为父进程终止了？或者像老师猜测的bash显示问题，已经写出来但是被覆盖了？
