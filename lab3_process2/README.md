@@ -2,11 +2,11 @@
 
 ## 查看进程的状态
 
-![1](/Users/nicole/Desktop/3-操作系统/b.lab/Lab3_code_for_lab/images/1.png)
+![1](images/1.png)
 
 实际上是这样的⬇️
 
-![2](/Users/nicole/Desktop/3-操作系统/b.lab/Lab3_code_for_lab/images/2.png)
+![2](images/2.png)
 
 结果
 
@@ -56,5 +56,5 @@ O_RDONLY: Open for reading only. O_WRONLY: Open for writing only.
 
 采用 message queue 进行进程间通信的范例
 
-![image-20190606223951225](/Users/nicole/Library/Application Support/typora-user-images/image-20190606223951225.png)
+![image-20190606223951225](images/image-20190606223951225.png)
 
